@@ -1,0 +1,73 @@
+name: Test and Deploy WorkMate Tools
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Vendor and verify SheetJS 0.20.3
+        run: bash scripts/vendor_sheetjs.sh
+      - name: Install fixed test dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Static security checks
+        run: python3 tests/static_check.py
+      - name: Excel round-trip integrity checks
+        run: node tests/excel_integrity.mjs
+      - name: Number uppercase conversion checks
+        run: node tests/number_uppercase.mjs
+      - name: Start local server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/workmate-http.log 2>&1 &
+          echo $! > /tmp/workmate-http.pid
+      - name: Browser regression tests
+        run: npx playwright test
+      - name: Stop local server
+        if: always()
+        run: kill $(cat /tmp/workmate-http.pid) 2>/dev/null || true
+      - name: Prepare Pages site
+        if: github.event_name != 'pull_request'
+        run: |
+          rm -rf _site
+          mkdir -p _site/vendor
+          cp index.html app.js styles.css sheetjs-loader.js number-uppercase.js .nojekyll _site/
+          cp vendor/xlsx.full.min.js vendor/jszip.min.js vendor/workmate-qr.js _site/vendor/
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Upload tested site artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
