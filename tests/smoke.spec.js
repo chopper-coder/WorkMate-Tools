@@ -60,7 +60,6 @@ test('Excel clean exposes integrity protections', async ({page}) => {
   await expect(page.locator('#toolMount')).toContainText('公式');
 });
 
-
 test('Excel clean detects formula risk and preserves displayed leading zero in preview', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="excel-clean"]').click();
@@ -83,7 +82,6 @@ test('annotation project can reopen and save through preview gate', async ({page
   await expect(page.locator('#exportModal')).not.toHaveClass(/hidden/);
   await expect(page.locator('#exportMeta')).toContainText('WorkMate_圖片標註專案.workmate');
 });
-
 
 test('raffle supports alternates, fullscreen control, and keeps duplicates by default', async ({page}) => {
   await page.goto('/');
@@ -113,7 +111,6 @@ test('QR and image compression expose progress and cancel controls', async ({pag
   await expect(page.locator('#icProgress')).toHaveCount(1);
 });
 
-
 test('Excel clean reports mixed-type columns before export', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="excel-clean"]').click();
@@ -124,22 +121,29 @@ test('Excel clean reports mixed-type columns before export', async ({page}) => {
   await expect(page.locator('#cleanOut')).toContainText('日期');
 });
 
-
 test('number uppercase converts ordinary and TWD currency values', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="number-uppercase"]').click();
-  await page.locator('#nuIn').fill('0\n10\n101\n10001\n12345.6\n123.456\n-20.05');
+
+  await page.locator('#nuIn').fill(
+    '0\n10\n101\n10001\n12345.6\n123.456\n-20.05'
+  );
+
   await page.locator('#nuMode').selectOption('currency');
   await page.locator('#nuRun').click();
-  const out=page.locator('#nuOut');
-  await expect(out).toContainText('新臺幣零元整');
-  await expect(out).toContainText('新臺幣壹拾元整');
-  await expect(out).toContainText('新臺幣壹佰零壹元整');
-  await expect(out).toContainText('新臺幣壹萬零壹元整');
-  await expect(out).toContainText('新臺幣壹萬貳仟參佰肆拾伍元陸角整');
-  await expect(out).toContainText('新臺幣壹佰貳拾參元肆角陸分');
-  await expect(out).toContainText('負新臺幣貳拾元零伍分');
+
+  const out = page.locator('#nuOut');
+
+  await expect(out).toHaveValue(/新臺幣零元整/);
+  await expect(out).toHaveValue(/新臺幣壹拾元整/);
+  await expect(out).toHaveValue(/新臺幣壹佰零壹元整/);
+  await expect(out).toHaveValue(/新臺幣壹萬零壹元整/);
+  await expect(out).toHaveValue(/新臺幣壹萬貳仟參佰肆拾伍元陸角整/);
+  await expect(out).toHaveValue(/新臺幣壹佰貳拾參元肆角陸分/);
+  await expect(out).toHaveValue(/負新臺幣貳拾元零伍分/);
+
   await page.locator('#nuMode').selectOption('number');
   await page.locator('#nuRun').click();
-  await expect(out).toContainText('壹萬貳仟參佰肆拾伍點陸');
+
+  await expect(out).toHaveValue(/壹萬貳仟參佰肆拾伍點陸/);
 });
