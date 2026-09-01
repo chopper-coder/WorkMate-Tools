@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.sheetjs.com; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'self' blob:;" />
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="description" content="工作喵工具箱 WorkMate Tools：檔案、Excel、文字、圖片、名單、日期與辦公小工具。" />
+  <title>🐱 工作喵工具箱｜WorkMate Tools</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-cat">🐱</div>
+        <div>
+          <strong>工作喵工具箱</strong>
+          <small>WorkMate Tools</small>
+        </div>
+      </div>
+      <nav id="categoryNav" aria-label="工具分類"></nav>
+      <div class="privacy-note">🔒 檔案內容於瀏覽器本機處理<br><span>ZIP 與 QR 引擎採本機 vendor；SheetJS 優先使用本機檔，缺少時只會使用固定版本＋SRI 的官方 CDN 備援。檔案內容不會主動上傳。</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-only" id="menuBtn" aria-label="開啟選單">☰</button>
+        <div class="search-wrap">
+          <span>🔎</span>
+          <input id="toolSearch" type="search" placeholder="我要做什麼？例如：合併 Excel、批次改檔名、算工作天…" autocomplete="off" />
+        </div>
+        <button class="ghost-btn" id="homeBtn">🏠 首頁</button>
+      </header>
+
+      <section id="homeView" class="view active">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">WorkMate Tools・不用安裝・不用登入・打開就能用</div>
+            <h1>🐱 工作喵工具箱</h1>
+            <p>聚焦 24 個核心辦公工具。V1.7 強化 Excel 變更與型別風險摘要、大型批次進度與取消、圖片標註自動復原與物件鎖定，以及抽籤正取／候補與全螢幕模式。</p>
+          </div>
+          <div class="hero-cat">😺💼</div>
+        </div>
+        <div id="buildNotice" class="warn-box hidden">⚠️ Excel 函式庫載入失敗。請確認網路連線，或執行 <code>PREPARE_OFFLINE.bat</code> 將 SheetJS 0.20.3 安裝到本機後再重新整理。</div>
+        <div class="quick-info">
+          <div><b id="toolCount">0</b><span>個工具</span></div>
+          <div><b>6</b><span>大分類</span></div>
+          <div><b>本機</b><span>資料處理</span></div>
+          <div><b>GitHub</b><span>Pages 可部署</span></div>
+        </div>
+        <section id="favoriteSection">
+          <div class="section-title"><h2>常用工具</h2><span>點一下直接使用</span></div>
+          <div id="favoriteGrid" class="tool-grid"></div>
+        </section>
+        <section>
+          <div class="section-title"><h2>全部工具</h2><span id="filterStatus">依分類瀏覽</span></div>
+          <div id="allToolGrid" class="tool-grid"></div>
+        </section>
+      </section>
+
+      <section id="toolView" class="view">
+        <div class="tool-header">
+          <button class="ghost-btn" id="backBtn">← 返回工具箱</button>
+          <div>
+            <div id="toolCategory" class="eyebrow"></div>
+            <h1 id="toolTitle"></h1>
+            <p id="toolDesc"></p>
+          </div>
+        </div>
+        <div id="toolMount" class="tool-mount"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="exportModal" class="export-modal hidden" aria-hidden="true" hidden>
+    <button class="export-backdrop" id="exportBackdrop" aria-label="取消輸出"></button>
+    <section class="export-dialog" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+      <div class="export-head">
+        <div>
+          <div class="eyebrow">輸出前確認</div>
+          <h2 id="exportTitle">確認下載</h2>
+        </div>
+        <button class="icon-btn" id="exportClose" aria-label="關閉輸出確認">✕</button>
+      </div>
+      <div id="exportMeta" class="export-meta"></div>
+      <div id="exportPreview" class="export-preview"></div>
+      <div class="actions export-actions">
+        <button class="ghost-btn" id="exportCancel">取消</button>
+        <button class="primary-btn" id="exportConfirm">確認下載</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+  <script src="vendor/workmate-qr.js"></script>
+  <script src="number-uppercase.js"></script>
+  <script src="sheetjs-loader.js"></script>
+</body>
+</html>
