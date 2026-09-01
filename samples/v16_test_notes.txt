@@ -1,0 +1,31 @@
+工作喵工具箱／WorkMate Tools V1.6｜Offline Security & Data Integrity Edition
+核心測試素材說明
+
+【Excel 完整性】
+Excel完整性_V1.6_前導0日期公式測試.xlsx
+- A欄：文字型 000123 / 001007，測試前導 0 不消失。
+- B欄：數值 123 / 7，number format 為 000000，測試數字仍是數字、顯示格式仍保留。
+- C欄：真正日期型別，格式 yyyy-mm-dd。
+- E欄：公式 =D2*2 / =D3*2，並含快取結果。
+- Excel 清洗預設勾選「移除空白列／重複列」時，應偵測公式並預設安全阻擋。
+
+【圖片標註專案】
+圖片標註_V1.6_專案續編測試.workmate
+- 內含 800×500 底圖與 3 個標註物件。
+- 開啟後狀態應顯示 3 個標註物件。
+- 框線、箭頭、文字仍應可以移動或修改。
+- 再按「儲存 .workmate」時應先出現輸出確認視窗。
+
+【既有核心回歸素材】
+- Excel清洗_測試.xlsx
+- Excel合併_01.xlsx / Excel合併_02.xlsx
+- Excel合併_欄位順序不同_應自動對齊.xlsx
+- Excel拆分_測試.xlsx
+- Excel比對_舊版.xlsx / Excel比對_新版_欄位順序不同.xlsx
+- Excel比對_重複與空白鍵值_應阻擋.xlsx
+- Excel去重_測試.xlsx
+- csv_formula_injection_test.csv
+- 圖片工具_測試.png / 圖片縮放_大圖測試.png / 圖片透明背景_JPG壓縮測試.png
+- 抽籤動畫_測試名單.txt / 座位表_同名資料測試.txt / 名單分組_重複資料_測試.txt
+- 文字格式整理、文字轉表格、文字差異、清單比對、日期轉換
+- 批次檔名、附件清單、重複檔案資料夾

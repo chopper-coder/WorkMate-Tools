@@ -1,0 +1,14 @@
+{
+  "name": "workmate-tools-v1-7",
+  "private": true,
+  "version": "1.7.0",
+  "scripts": {
+    "test:static": "python3 tests/static_check.py",
+    "test:excel": "node tests/excel_integrity.mjs",
+    "test:browser": "playwright test",
+    "test:number": "node tests/number_uppercase.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}
