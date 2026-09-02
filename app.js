@@ -240,6 +240,23 @@ addTool('number-uppercase','text','🧾','數字轉中文大寫','一般數字�
  $('#nuCsv').onclick=()=>{if(!run())return;downloadCsvRows([['原始數字','中文大寫','狀態'],...rows],'數字轉中文大寫.csv');};
 },true);
 
+addTool('name-mask','text','🙈','姓名遮罩','保留姓名第一個字與最後一個字，中間全部以 O 遮罩；兩個字姓名保留第一字、第二字改為 O。支援批次、複製與 CSV。','姓名 遮罩 個資 隱私 去識別 王O明 O anonymize privacy',()=>{
+ if(!window.WorkMateNameMask){mount.innerHTML='<div class="error-box">姓名遮罩模組載入失敗，請重新整理頁面。</div>';return;}
+ mount.innerHTML=panel('姓名遮罩',`${textAreaField('nmIn','姓名（一行一筆）','王曉明\n王明\n歐陽小明\n司徒王小明')}<div class="hint">遮罩規則：保留第一個字與最後一個字，中間全部改成英文字母 O；兩個字姓名為「第一字＋O」。單字姓名會完整遮罩成 O。</div><div class="actions"><button class="primary-btn" id="nmRun">開始遮罩</button><button class="ghost-btn" id="nmCopy">複製結果</button><button class="ghost-btn" id="nmCsv">下載 CSV</button></div><div id="nmMeta"></div>${textAreaField('nmOut','遮罩結果')}`);
+ let rows=[];
+ function run(){
+   const source=$('#nmIn').value;if(!validateTextSize(source,1_000_000,'姓名資料'))return false;
+   rows=WorkMateNameMask.maskLines(source);
+   if(rows.length>10000){toast('單次最多處理 10,000 筆姓名');rows=[];return false;}
+   $('#nmOut').value=rows.map(r=>r.masked).join('\n');
+   $('#nmMeta').innerHTML=`<div class="metric-grid"><div class="metric"><b>${rows.length}</b><span>處理筆數</span></div><div class="metric"><b>${rows.filter(r=>WorkMateNameMask.graphemes(r.name).length===2).length}</b><span>兩字姓名</span></div><div class="metric"><b>${rows.filter(r=>WorkMateNameMask.graphemes(r.name).length>=3).length}</b><span>三字以上</span></div></div>`;
+   return rows.length>0;
+ }
+ $('#nmRun').onclick=run;
+ $('#nmCopy').onclick=()=>{if(!rows.length&&!run())return;copyText($('#nmOut').value);};
+ $('#nmCsv').onclick=()=>{if(!run())return;downloadCsvRows([['原始姓名','遮罩姓名'],...rows.map(r=>[r.name,r.masked])],'姓名遮罩結果.csv');};
+},true);
+
 addTool('text-table','text' ,'📋','文字轉表格工具','自動或指定分隔符轉表格，檢查欄數一致性並輸出 CSV/XLSX/TSV。','文字 表格 csv excel tsv 欄位',()=>{
  mount.innerHTML=panel('文字轉表格',`${textAreaField('ttIn','原始資料','例如：王小明\t0912345678\t台北')}<div class="row"><div class="field"><label>分隔方式</label><select id="ttSep"><option value="auto">自動判斷</option><option value="tab">Tab</option><option value="comma">逗號</option><option value="space">空白</option><option value="custom">自訂</option></select></div>${inputField('ttCustom','自訂分隔符','text','|')}</div><div class="actions"><button class="primary-btn" id="ttPreview">轉成表格</button><button class="ghost-btn" id="ttCsv">下載 CSV</button><button class="ghost-btn" id="ttXlsx">下載 XLSX</button><button class="ghost-btn" id="ttTsv">複製 TSV</button></div><div id="ttMeta"></div><div id="ttOut"></div>`);
  let rows=[];function parse(){const source=$('#ttIn').value;if(!validateTextSize(source))return[];const lines=source.split(/\r?\n/).filter(x=>x.trim());if(lines.length>50000){toast('資料列過多，上限 50,000 列');return[];}const mode=$('#ttSep').value;rows=lines.map(line=>{if(mode==='tab')return line.split('\t');if(mode==='comma')return line.split(',');if(mode==='space')return line.trim().split(/\s+/);if(mode==='custom')return line.split($('#ttCustom').value||'|');if(line.includes('\t'))return line.split('\t');if(line.includes(','))return line.split(',');return line.trim().split(/\s+/);}).map(r=>r.map(x=>x.trim()));const widths=rows.map(r=>r.length),max=Math.max(0,...widths),bad=widths.filter(x=>x!==max).length;$('#ttMeta').innerHTML=rows.length?`<div class="metric-grid"><div class="metric"><b>${rows.length}</b><span>列數</span></div><div class="metric"><b>${max}</b><span>最大欄數</span></div><div class="metric"><b>${bad}</b><span>欄數不一致列</span></div></div>${bad?'<div class="warn-box">部分列的欄位數不同，下載前請先確認分隔方式。</div>':''}`:'';$('#ttOut').innerHTML=htmlTable(rows);return rows;}$('#ttPreview').onclick=parse;$('#ttCsv').onclick=()=>{const r=parse();if(!r.length)return toast('沒有資料');downloadCsvRows(r,'文字轉表格.csv');};$('#ttXlsx').onclick=()=>{if(!requireLib('SheetJS',window.XLSX))return;const r=parse();if(!r.length)return toast('沒有資料');const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,rowsToSheet(r),'資料');downloadWorkbook(wb,'文字轉表格.xlsx');};$('#ttTsv').onclick=()=>{const r=parse();if(r.length)copyText(r.map(x=>x.join('\t')).join('\n'));};

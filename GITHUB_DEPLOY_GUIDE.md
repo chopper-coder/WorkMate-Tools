@@ -29,6 +29,7 @@ app.js
 styles.css
 sheetjs-loader.js
 number-uppercase.js
+name-mask.js
 package.json
 playwright.config.js
 PREPARE_OFFLINE.bat
@@ -96,9 +97,10 @@ Workflow 會自動：
 4. 執行靜態資安檢查。
 5. 執行 Excel 型別／前導 0／日期／公式 round-trip 測試。
 6. 執行數字轉中文大寫測試。
-7. 執行 Chromium 回歸測試。
-8. 全部通過後建立 `_site`。
-9. 只將正式網站 runtime 發布到 GitHub Pages。
+7. 執行姓名遮罩測試。
+8. 執行 Chromium 回歸測試。
+9. 全部通過後建立 `_site`。
+10. 只將正式網站 runtime 發布到 GitHub Pages。
 
 如果其中任何測試失敗，網站不會部署新版。
 
@@ -122,6 +124,7 @@ Workflow 會自動：
 - `Static security checks`：程式結構或資安規則不符合。
 - `Excel round-trip integrity checks`：Excel 型別／格式／公式保護回歸。
 - `Number uppercase conversion checks`：數字轉中文大寫回歸。
+- `Name masking checks`：姓名遮罩規則回歸。
 - `Browser regression tests`：網站 UI / 功能回歸。
 
 不要略過失敗的測試直接部署，先修正問題再重新執行。

@@ -24,8 +24,8 @@ def ck(name, cond):
 # Core tool inventory
 # ─────────────────────────────────────────────
 ck(
-    "24 core tools",
-    len(re.findall(r"^addTool\('", app, re.M)) == 24
+    "25 core tools",
+    len(re.findall(r"^addTool\('", app, re.M)) == 25
 )
 
 # ─────────────────────────────────────────────
@@ -173,6 +173,17 @@ ck(
 )
 
 # ─────────────────────────────────────────────
+# Name masking
+# ─────────────────────────────────────────────
+ck(
+    "Name masking tool exists",
+    "addTool('name-mask'" in app
+    and "WorkMateNameMask.maskLines" in app
+    and (root / "name-mask.js").exists()
+    and (root / "tests" / "name_mask.mjs").exists()
+)
+
+# ─────────────────────────────────────────────
 # GitHub Pages deployment package
 # ─────────────────────────────────────────────
 
@@ -180,6 +191,7 @@ ck(
 helper_scripts_ok = (
     "sheetjs-loader.js" in workflow
     and "number-uppercase.js" in workflow
+    and "name-mask.js" in workflow
 )
 
 # Support both:

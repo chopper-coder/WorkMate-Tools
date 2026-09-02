@@ -1,6 +1,6 @@
 # 🐱 工作喵工具箱｜WorkMate Tools
 
-**工作喵工具箱（WorkMate Tools）** 是可直接部署到 GitHub Pages 的純前端上班族工具箱，目前包含 **24 個核心工具、6 大分類**。所有文件與圖片處理原則上都在使用者瀏覽器本機完成。
+**工作喵工具箱（WorkMate Tools）** 是可直接部署到 GitHub Pages 的純前端上班族工具箱，目前包含 **25 個核心工具、6 大分類**。所有文件與圖片處理原則上都在使用者瀏覽器本機完成。
 
 ## 主要功能
 
@@ -13,6 +13,18 @@
 
 ## V1.7 重點
 
+### 姓名遮罩
+
+新增「姓名遮罩」工具，依姓名長度自動隱去中間字元：
+
+- `王曉明 → 王O明`
+- `王明 → 王O`
+- `歐陽小明 → 歐OO明`
+- `司徒王小明 → 司OOO明`
+
+支援一行一筆批次轉換、複製結果與 CSV 匯出；單字姓名會完整遮罩為 `O`。
+
+
 - Excel 型別／前導 0／日期／公式風險摘要
 - Excel、QR、圖片大量處理進度與取消
 - 圖片標註 IndexedDB 自動草稿復原
@@ -24,6 +36,42 @@
 - CSP 不使用 `unsafe-inline`
 - GitHub Actions 測試通過後才部署 Pages
 
+## GitHub Pages 部署
+
+完整步驟請看 [`GITHUB_DEPLOY_GUIDE.md`](GITHUB_DEPLOY_GUIDE.md)。
+
+最簡單流程：
+
+1. 建立新的 GitHub Repository。
+2. **把本資料夾裡的內容全部放在 repository 根目錄**，不要再包一層 `WorkMate_Tools_V1.7_GitHub_Upload/`。
+3. 到 **Settings → Pages → Build and deployment → Source** 選擇 **GitHub Actions**。
+4. Push / 上傳到 `main` 後，GitHub Actions 會自動執行測試及部署。
+5. `Test and Deploy WorkMate Tools` 全部綠色後即可開啟 Pages 網址。
+
+Pages 網址格式通常是：
+
+```text
+https://<你的GitHub帳號>.github.io/<Repository名稱>/
+```
+
+## SheetJS / Excel
+
+原始碼採 **本機優先＋官方固定版本備援**：
+
+- GitHub Actions 在測試與部署前會執行 `scripts/vendor_sheetjs.sh`。
+- 腳本僅下載官方 **SheetJS 0.20.3**，並驗證固定 checksum。
+- 測試通過後，正式 Pages 會使用已 vendor 的本機 `vendor/xlsx.full.min.js`。
+- Windows 需要完全離線使用時，可在有網路的情況下先執行一次 `PREPARE_OFFLINE.bat`。
+
+## 自動測試
+
+GitHub Actions 會執行：
+
+- 靜態資安／部署結構檢查
+- Excel round-trip 完整性測試
+- 數字轉中文大寫測試
+- Chromium / Playwright 回歸測試
+- 測試成功後才部署 GitHub Pages
 
 ## 安全與隱私
 

@@ -1,11 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
-test('home loads under strict CSP with 24 tools', async ({page}) => {
+test('home loads under strict CSP with 25 tools', async ({page}) => {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');
   await expect(page).toHaveTitle(/工作喵工具箱|WorkMate Tools/);
-  await expect(page.locator('#toolCount')).toHaveText('24');
-  await expect(page.locator('#allToolGrid [data-tool]')).toHaveCount(24);
+  await expect(page.locator('#toolCount')).toHaveText('25');
+  await expect(page.locator('#allToolGrid [data-tool]')).toHaveCount(25);
   expect(await page.locator('#favoriteGrid [data-tool]').count()).toBeGreaterThan(0);
   await expect(page.locator('#buildNotice')).toBeHidden();
   expect(errors).toEqual([]);
@@ -15,7 +15,7 @@ test('all core tools can open without page errors', async ({page}) => {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/');
   const ids=await page.locator('#allToolGrid [data-tool]').evaluateAll(es=>es.map(e=>e.dataset.tool));
-  expect(ids).toHaveLength(24);
+  expect(ids).toHaveLength(25);
   for(const id of ids){
     await page.locator(`#allToolGrid [data-tool="${id}"]`).click();
     await expect(page.locator('#toolView')).toHaveClass(/active/);
@@ -60,6 +60,7 @@ test('Excel clean exposes integrity protections', async ({page}) => {
   await expect(page.locator('#toolMount')).toContainText('公式');
 });
 
+
 test('Excel clean detects formula risk and preserves displayed leading zero in preview', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="excel-clean"]').click();
@@ -82,6 +83,7 @@ test('annotation project can reopen and save through preview gate', async ({page
   await expect(page.locator('#exportModal')).not.toHaveClass(/hidden/);
   await expect(page.locator('#exportMeta')).toContainText('WorkMate_圖片標註專案.workmate');
 });
+
 
 test('raffle supports alternates, fullscreen control, and keeps duplicates by default', async ({page}) => {
   await page.goto('/');
@@ -111,6 +113,7 @@ test('QR and image compression expose progress and cancel controls', async ({pag
   await expect(page.locator('#icProgress')).toHaveCount(1);
 });
 
+
 test('Excel clean reports mixed-type columns before export', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="excel-clean"]').click();
@@ -121,19 +124,14 @@ test('Excel clean reports mixed-type columns before export', async ({page}) => {
   await expect(page.locator('#cleanOut')).toContainText('日期');
 });
 
+
 test('number uppercase converts ordinary and TWD currency values', async ({page}) => {
   await page.goto('/');
   await page.locator('#allToolGrid [data-tool="number-uppercase"]').click();
-
-  await page.locator('#nuIn').fill(
-    '0\n10\n101\n10001\n12345.6\n123.456\n-20.05'
-  );
-
+  await page.locator('#nuIn').fill('0\n10\n101\n10001\n12345.6\n123.456\n-20.05');
   await page.locator('#nuMode').selectOption('currency');
   await page.locator('#nuRun').click();
-
-  const out = page.locator('#nuOut');
-
+  const out=page.locator('#nuOut');
   await expect(out).toHaveValue(/新臺幣零元整/);
   await expect(out).toHaveValue(/新臺幣壹拾元整/);
   await expect(out).toHaveValue(/新臺幣壹佰零壹元整/);
@@ -141,9 +139,17 @@ test('number uppercase converts ordinary and TWD currency values', async ({page}
   await expect(out).toHaveValue(/新臺幣壹萬貳仟參佰肆拾伍元陸角整/);
   await expect(out).toHaveValue(/新臺幣壹佰貳拾參元肆角陸分/);
   await expect(out).toHaveValue(/負新臺幣貳拾元零伍分/);
-
   await page.locator('#nuMode').selectOption('number');
   await page.locator('#nuRun').click();
-
   await expect(out).toHaveValue(/壹萬貳仟參佰肆拾伍點陸/);
+});
+
+
+test('name masking handles two, three and long names', async ({page}) => {
+  await page.goto('/');
+  await page.locator('#allToolGrid [data-tool="name-mask"]').click();
+  await page.locator('#nmIn').fill('王曉明\n王明\n歐陽小明\n司徒王小明\n王小明小華\n王小明小華強');
+  await page.locator('#nmRun').click();
+  await expect(page.locator('#nmOut')).toHaveValue('王O明\n王O\n歐OO明\n司OOO明\n王OOO華\n王OOOO強');
+  await expect(page.locator('#nmMeta')).toContainText('6');
 });

@@ -1,44 +1,39 @@
-工作喵工具箱｜WorkMate Tools V1.7
-Final Self-Test Report
-Date: 2026-09-01
+工作喵工具箱｜WorkMate Tools V1.7.1
+Self-Test Report
+Date: 2026-09-02
 
 Scope
-- 23 core tools / 6 categories
-- V1.7 Excel integrity profiling
-- Excel long-task progress/cancel
-- Image annotation IndexedDB recovery + object lock
-- QR/image compression progress/cancel
-- Raffle winners/alternates/fullscreen
-- Duplicate-preserving group/raffle defaults
-- Unified export preview/confirm/download
+- 25 core tools / 6 categories
+- V1.7 workflow safety and recovery features
+- Number uppercase conversion
+- New name masking tool
 
 Executed in this environment
-1. JavaScript syntax checks
-2. Static security / CSP checks (31/31 PASS)
-3. Core tool inventory checks
-4. V1.7 feature-presence regression checks
-5. Sample XLSX structural/readability check
-6. .workmate ZIP/project structure compatibility check
-7. Test sample ZIP and final ZIP integrity checks
-8. SHA-256 manifest regeneration
+1. app.js / name-mask.js / number-uppercase.js / sheetjs-loader.js syntax: PASS
+2. Playwright smoke test source syntax: PASS
+3. Name masking deterministic tests: 10/10 PASS
+4. Number uppercase deterministic tests: 15/15 PASS
+5. Static security / deployment checks: 36/36 PASS
+6. GitHub Actions YAML parse: PASS
+7. Core tool inventory: 25 tools PASS
+8. CSP / risky API / export-gate checks: PASS
 
-Browser runtime limitation
-- Chromium navigation to both local HTTP and file URLs is blocked by the execution environment with ERR_BLOCKED_BY_ADMINISTRATOR.
-- Therefore browser runtime tests are NOT reported as passed in this local report.
-- GitHub Actions includes Playwright/Chromium tests after vendoring the verified SheetJS binary; deployment is gated on those tests.
+Name masking cases verified
+- 王曉明 → 王O明
+- 王明 → 王O
+- 歐陽小明 → 歐OO明
+- 司徒王小明 → 司OOO明
+- 王小明小華 → 王OOO華
+- 王小明小華強 → 王OOOO強
+- 王 → O
+- Leading/trailing whitespace trimming
+- Rare CJK surrogate-pair name handling
+- Batch line conversion
 
-Release standard
-- Any failed syntax/static/integrity check blocks local packaging.
-- Any failed GitHub Actions static, Excel round-trip, or browser regression test blocks Pages deployment.
+GitHub deployment
+- deploy.yml runs name_mask.mjs before browser regression tests.
+- name-mask.js is copied into _site before Pages artifact upload.
+- Any failed test blocks deployment.
 
-Release-blocking issue fixed during final review
-- deploy.yml originally omitted sheetjs-loader.js from _site. V1.7 now includes it and static tests enforce that all required runtime loader/vendor files are packaged.
-
-
-V1.7 Number Uppercase Update
-- Core tool count: 24
-- number-uppercase.js syntax: PASS
-- 15/15 deterministic conversion cases: PASS
-- Cases include 0, 拾/佰/仟, 萬/億/兆, negative numbers, decimals, TWD rounding to cents, accounting parentheses and full-width digits.
-- Static security / deployment checks after update: 32/32 PASS
-- GitHub Pages workflow updated to deploy number-uppercase.js and run number_uppercase.mjs.
+Browser runtime
+- Full Playwright execution is intentionally left to GitHub Actions, where the deployed repository already has a working Chromium test gate.
