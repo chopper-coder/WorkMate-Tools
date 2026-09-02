@@ -46,6 +46,9 @@ jobs:
       - name: Number uppercase conversion checks
         run: node tests/number_uppercase.mjs
 
+      - name: Name masking checks
+        run: node tests/name_mask.mjs
+
       - name: Start local server
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/workmate-http.log 2>&1 &
@@ -72,6 +75,7 @@ jobs:
           cp styles.css _site/
           cp sheetjs-loader.js _site/
           cp number-uppercase.js _site/
+          cp name-mask.js _site/
 
           cp vendor/xlsx.full.min.js _site/vendor/
           cp vendor/jszip.min.js _site/vendor/
