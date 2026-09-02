@@ -1,4 +1,4 @@
-# 🐱 工作喵工具箱｜WorkMate Tools V1.7 Security & Data Integrity Audit
+# 🐱 工作喵工具箱｜WorkMate Tools V1.7.1 Security & Data Integrity Audit
 
 ## 結論
 本版在目前可執行的靜態、語法、檔案結構與資料完整性檢查中，未發現阻擋發佈的高風險問題。

@@ -16,7 +16,7 @@
 
 ## 二、上傳檔案
 
-解壓縮 `WorkMate_Tools_V1.7_GitHub_Upload.zip` 後，會看到：
+解壓縮 `WorkMate_Tools_V1.7.1_GitHub_Full_Upload.zip` 後，會看到：
 
 ```text
 .github/
@@ -52,7 +52,7 @@ GitHub Repository 的最外層必須直接看到 `index.html`。
 3. 確認 `.github/workflows/deploy.yml` 也有上傳。
 4. Commit message 可輸入：
 
-   `Deploy WorkMate Tools V1.7`
+   `Deploy WorkMate Tools V1.7.1`
 
 5. 按 **Commit changes**。
 
@@ -157,4 +157,4 @@ Workflow 會自動：
 
 此修正版已將 `samples/` 內的測試檔名全部改成英文 ASCII，避免 Windows 解壓縮或瀏覽器上傳時出現中文檔名亂碼。
 
-如果你使用 GitHub 網頁手動選檔上傳，請特別確認 `.github/workflows/deploy.yml` 有成功上傳。若不想處理隱藏/自動化資料夾，請改用 `WorkMate_Tools_V1.7_GitHub_Simple_Upload.zip`，並以 **Deploy from a branch** 發布。
+如果你使用 GitHub 網頁手動選檔上傳，請特別確認 `.github/workflows/deploy.yml` 有成功上傳。若不想處理隱藏/自動化資料夾，請改用 `WorkMate_Tools_V1.7.1_GitHub_Full_Upload.zip`，並以 **Deploy from a branch** 發布。
